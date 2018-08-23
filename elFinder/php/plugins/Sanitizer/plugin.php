@@ -1,11 +1,5 @@
+<?php if(!defined('ABSPATH')) die(); // Security check?>
 <?php
-/**
- * 
- * Security check. No one can access without Wordpress itself
- * 
- * */
-defined('ABSPATH') or die();
-
 /**
  * elFinder Plugin Sanitizer
  *
@@ -14,8 +8,11 @@ defined('ABSPATH') or die();
  * ex. binding, configure on connector options
  *	$opts = array(
  *		'bind' => array(
- *			'upload.pre mkdir.pre mkfile.pre rename.pre archive.pre' => array(
+ *			'upload.pre mkdir.pre mkfile.pre rename.pre archive.pre ls.pre' => array(
  *				'Plugin.Sanitizer.cmdPreprocess'
+ *			),
+ *			'ls' => array(
+ *				'Plugin.Sanitizer.cmdPostprocess'
  *			),
  *			'upload.presave' => array(
  *				'Plugin.Sanitizer.onUpLoadPreSave'
@@ -53,7 +50,12 @@ defined('ABSPATH') or die();
 class elFinderPluginSanitizer
 {
 	private $opts = array();
-	
+	private $replaced = array();
+	private $keyMap = array(
+		'ls' => 'intersect',
+		'upload' => 'renames'
+	);
+
 	public function __construct($opts) {
 		$defaults = array(
 			'enable'   => true,  // For control by volume driver
@@ -69,19 +71,38 @@ class elFinderPluginSanitizer
 		if (! $opts['enable']) {
 			return false;
 		}
-	
-		if (isset($args['name'])) {
-			if (is_array($args['name'])) {
-				foreach($args['name'] as $i => $name) {
-					$args['name'][$i] = $this->sanitizeFileName($name, $opts);
+		$this->replaced[$cmd] = array();
+		$key = (isset($this->keyMap[$cmd]))? $this->keyMap[$cmd] : 'name';
+		
+		if (isset($args[$key])) {
+			if (is_array($args[$key])) {
+				foreach($args[$key] as $i => $name) {
+					$this->replaced[$cmd][$name] = $args[$key][$i] = $this->sanitizeFileName($name, $opts);
 				}
 			} else {
-				$args['name'] = $this->sanitizeFileName($args['name'], $opts);
+				$name = $args[$key];
+				$this->replaced[$cmd][$name] = $args[$key] = $this->sanitizeFileName($name, $opts);
 			}
 		}
 		return true;
 	}
-
+	
+	public function cmdPostprocess($cmd, &$result, $args, $elfinder) {
+		if ($cmd === 'ls') {
+			if (! empty($result['list']) && ! empty($this->replaced['ls'])) {
+				foreach($result['list'] as $hash => $name) {
+					if ($keys = array_keys($this->replaced['ls'], $name)) {
+						if (count($keys) === 1) {
+							$result['list'][$hash] = $keys[0];
+						} else {
+							$result['list'][$hash] = $keys;
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	public function onUpLoadPreSave(&$path, &$name, $src, $elfinder, $volume) {
 		$opts = $this->getOpts($volume);
 		if (! $opts['enable']) {

@@ -1,16 +1,7 @@
+<?php if(!defined('ABSPATH')) die(); // Security check?>
 <?php
-/**
- * 
- * Security check. No one can access without Wordpress itself
- * 
- * */
-defined('ABSPATH') or die();
 
-// Including necessary files
-include_once( 'php' . DS . 'elFinderConnector.class.php' );
-include_once( 'php' . DS . 'elFinder.class.php' );
-include_once( 'php' . DS . 'elFinderVolumeDriver.class.php' );
-include_once( 'php' . DS . 'elFinderVolumeLocalFileSystem.class.php' );
+include_once( 'php' . DS . 'autoload.php' );
 
 /**
  * 
