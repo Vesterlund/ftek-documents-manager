@@ -3,7 +3,7 @@
 Plugin Name: Ftek Documents Manager
 Author Name: Ingrid Strandberg
 License: GPLv2
-Version: 2.0.1
+Version: 2.0.2
 Description: Ladda upp sektionsmötesprotokoll, med mera.
 GitHub Plugin URI: Fysikteknologsektionen/ftek-documents-manager
 */
@@ -52,9 +52,19 @@ if (!class_exists('FM')) {
 	 *
 	 * */
 	public function connector(){
-
+		$userCap = 0;
 	  // Checks if the current user have enough authorization to operate.
-	  if( !current_user_can('manage_styret_files') ) die();
+		if (current_user_can('manage_styret_files')) {
+			$userCap = 0;
+		}else if (current_user_can('fnollk_files')) {
+			$userCap = 1;
+		}else if (current_user_can('finform_files')) {
+			$userCap = 2;
+		}else {
+			die();
+		}
+
+		//Todo: Prevent from starting if user has MORE than one manage files capability
 
 	  //~ Holds the list of avilable file operations.
 	  $file_operation_list = array(
@@ -107,6 +117,8 @@ if (!class_exists('FM')) {
 
 	  $mime_denied = array();
 
+		  $permittedPath = get_option('ftekdm_path_settings')['path-' . $userCap];
+
 	  $opts = array(
 		  'bind' => array(
 			'*' => 'logger'
@@ -115,8 +127,8 @@ if (!class_exists('FM')) {
 		  'roots' => array(
 			array(
 			  'driver'        => 'LocalFileSystem',           // driver for accessing file system (REQUIRED)
-			  'path'          => '/var/www/html/wp-content/uploads/ftek-documents',                     // path to files (REQUIRED)
-			  'URL'           => site_url() . '/wp-content/uploads/ftek-documents',                  // URL to files (REQUIRED)
+			  'path'          => '/var/www/html/wp-content/uploads/ftek-documents' . $permittedPath,                     // path to files (REQUIRED)
+			  'URL'           => site_url() . '/wp-content/uploads/ftek-documents' . $permittedPath,                  // URL to files (REQUIRED)
 			  'uploadDeny'    => $mime_denied,                // All Mimetypes not allowed to upload
 			  'uploadAllow'   => $mime_allowed,               // Mimetype `image` and `text/plain` allowed to upload
 			  'uploadOrder'   => array('allow', 'deny'),      // allowed Mimetype `image` and `text/plain` only
