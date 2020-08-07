@@ -216,7 +216,7 @@ function ftekdm_admin_add_page() {
 	add_options_page(
 		__('Ftek Document Manager Settings', 'ftekdm'),
 		__('Ftek Document Manager'),
-		'manage_styret_files',
+		'fnollk_files',
 		FTEKDM_SETTINGS,
 		'ftekdm_settings_page'
 	);
