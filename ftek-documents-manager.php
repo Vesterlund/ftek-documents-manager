@@ -3,7 +3,7 @@
 Plugin Name: Ftek Documents Manager
 Author Name: Ingrid Strandberg
 License: GPLv2
-Version: 2.0.7
+Version: 2.0.8
 Description: Ladda upp sektionsmötesprotokoll, med mera.
 GitHub Plugin URI: Fysikteknologsektionen/ftek-documents-manager
 */
@@ -127,8 +127,8 @@ if (!class_exists('FM')) {
 		  'roots' => array(
 			array(
 			  'driver'        => 'LocalFileSystem',           // driver for accessing file system (REQUIRED)
-			  'path'          => '/var/www/html/wp-content/uploads/ftek-documents' . $permittedPath,                     // path to files (REQUIRED)
-			  'URL'           => site_url() . '/wp-content/uploads/ftek-documents' . $permittedPath,                  // URL to files (REQUIRED)
+			  'path'          => '/var/www/html/wp-content/uploads/ftek-documents',                     // path to files (REQUIRED)
+			  'URL'           => site_url() . '/wp-content/uploads/ftek-documents',                  // URL to files (REQUIRED)
 			  'uploadDeny'    => $mime_denied,                // All Mimetypes not allowed to upload
 			  'uploadAllow'   => $mime_allowed,               // Mimetype `image` and `text/plain` allowed to upload
 			  'uploadOrder'   => array('allow', 'deny'),      // allowed Mimetype `image` and `text/plain` only
