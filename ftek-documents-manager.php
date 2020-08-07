@@ -54,7 +54,7 @@ if (!class_exists('FM')) {
 	public function connector(){
 		$userCap = 0;
 	  // Checks if the current user have enough authorization to operate.
-		if (current_user_can('manage_styret_files')) {
+		if (current_user_can('fnollk_files')) {
 			$userCap = 0;
 		}elseif (current_user_can('fnollk_files')) {
 			$userCap = 1;
@@ -216,7 +216,7 @@ function ftekdm_admin_add_page() {
 	add_options_page(
 		__('Ftek Document Manager Settings', 'ftekdm'),
 		__('Ftek Document Manager'),
-		'fnollk_files',
+		'manage_styret_files',
 		FTEKDM_SETTINGS,
 		'ftekdm_settings_page'
 	);
