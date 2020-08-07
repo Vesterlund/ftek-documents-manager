@@ -241,6 +241,8 @@ if (!class_exists('FM_BootStart')) {
       if($this->menu_data['type'] == 'menu'){
 
         add_menu_page( $this->name, $this->name, 'manage_styret_files', $this->prefix, array(&$this, 'admin_panel'), $this->url('img/icon-24x24.png'), 7 );
+        add_menu_page( $this->name, $this->name, 'fnollk_files', $this->prefix, array(&$this, 'admin_panel'), $this->url('img/icon-24x24.png'), 7 );
+        add_menu_page( $this->name, $this->name, 'finform_files', $this->prefix, array(&$this, 'admin_panel'), $this->url('img/icon-24x24.png'), 7 );
 
       }
 
@@ -253,7 +255,7 @@ if (!class_exists('FM_BootStart')) {
      * */
     public function admin_panel(){
 
-      if(!current_user_can('manage_styret_files')) die( $this->render('', 'access-denied') );
+      if(!current_user_can('manage_styret_files') || !current_user_can('fnollk_files') || !current_user_can('finform_files') ) die( $this->render('', 'access-denied') );
 
       $this->render('', 'admin' . DS . 'index');
 

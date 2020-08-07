@@ -5,7 +5,7 @@
  * 
  * */
 defined('ABSPATH') or die();
-if( !current_user_can('manage_styret_files') ) die();
+if( !current_user_can('manage_styret_files') || !current_user_can('fnollk_files') || !current_user_can('finform_files') ) die();
 	
 ?>
 
