@@ -241,7 +241,6 @@ if (!class_exists('FM_BootStart')) {
       if($this->menu_data['type'] == 'menu'){
 
         add_menu_page( $this->name, $this->name, 'manage_styret_files', $this->prefix, array(&$this, 'admin_panel'), $this->url('img/icon-24x24.png'), 7 );
-        add_menu_page( $this->name, $this->name, 'fnollk_files', $this->prefix, array(&$this, 'admin_panel'), $this->url('img/icon-24x24.png'), 8 );
 
       }
 
