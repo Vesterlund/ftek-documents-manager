@@ -5,7 +5,19 @@
  * 
  * */
 defined('ABSPATH') or die();
-if( !current_user_can('manage_styret_files') && !current_user_can('fnollk_files') ) die();
+
+$capabilityArray = ftekdm_generate_capability_array();
+$die = TRUE;
+
+foreach($capabilityArray as $capability) {
+	if(current_user_can($capability)) {
+		$die = FALSE;
+		break;	
+	}
+}
+
+
+if( $die ) die();
 	
 ?>
 
@@ -42,4 +54,10 @@ if( isset( $this->options->options['file_manager_settings']['show_url_path'] ) &
 	
 }
 
+
+function ftekdm_generate_capability_array() {
+	$options = get_option(FTEKDM_PATH_SETTINGS);
+	$cString = $options['capability-list'];
+  
+	return explode(",",$cString);}
 ?>
