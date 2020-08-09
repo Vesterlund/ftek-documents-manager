@@ -3,7 +3,7 @@
 Plugin Name: Ftek Documents Manager
 Author: Ingrid Strandberg | Updated by: Albert Vesterlund
 License: GPLv2
-Version: 2.1.3
+Version: 2.1.4
 Description: Ladda upp sektionsmötesprotokoll, med mera.
 GitHub Plugin URI: Fysikteknologsektionen/ftek-documents-manager
 */
@@ -52,19 +52,24 @@ if (!class_exists('FM')) {
 	 *
 	 * */
 	public function connector(){
-		$userCap = -1;
-	  // Checks if the current user have enough authorization to operate.
-		if (current_user_can('manage_styret_files')) {
-			$userCap = 0;
-		}elseif (current_user_can('finform_files')) {
-			$userCap = 1;
-		}elseif (current_user_can('fnollk_files')) {
-			$userCap = 2;
-		}else {
-			die();
+		
+	  	// Checks if the current user have enough authorization to operate.
+
+		$capabilityArray = ftekdm_generate_capability_array();
+		$cUserCapability = "";
+
+		for($i = 0; $i < count($capabilityArray); $i++) {
+			$capability = $capabilityArray[$i];
+
+			if (current_user_can($capability)){
+				$cUserCapability = $capability;
+				break;
+			}
 		}
 
-		//Todo: Prevent from starting if user has MORE than one manage files capability
+		if($cUserCapability == "") {
+			die();
+		}
 
 	  //~ Holds the list of avilable file operations.
 	  $file_operation_list = array(
@@ -117,7 +122,7 @@ if (!class_exists('FM')) {
 
 	  $mime_denied = array();
 
-	  $permittedPath = get_option('ftekdm_path_settings')['path-' . $userCap];
+	  $permittedPath = get_option('ftekdm_path_settings')['path_' . $cUserCapability];
 
 	  $opts = array(
 		  'bind' => array(
@@ -313,5 +318,5 @@ function ftekdm_field_roles($capability) {
 	$name = FTEKDM_PATH_SETTINGS;
 
 	echo __("Path", 'ftekdm');
-	echo "<input type='text' id='ftekdm_{$capability}_path' name='{$name}[path-$capability]' value='$path'>";
+	echo "</br><input type='text' id='ftekdm_{$capability}_path' name='{$name}[path_$capability]' value='$path' style='width:100%;'>";
 }
