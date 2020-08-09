@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Ftek Documents Manager
-Author Name: Ingrid Strandberg
+Author: Ingrid Strandberg Update: Albert Vesterlund
 License: GPLv2
-Version: 2.1.0
+Version: 2.1.1
 Description: Ladda upp sektionsmötesprotokoll, med mera.
 GitHub Plugin URI: Fysikteknologsektionen/ftek-documents-manager
 */
@@ -208,6 +208,12 @@ if (!function_exists('logger'))   {
 global $FileManager;
 $FileManager = new FM('Ftek Documents Manager');
 
+
+/*
+* Settings stuff
+*
+*/
+
 define('FTEKDM_SETTINGS', 'ftekdm_settings');
 define('FTEKDM_PATH_SETTINGS', 'ftekdm_path_settings');
 
@@ -255,6 +261,16 @@ function ftekdm_admin_init() {
 		FTEKDM_SETTINGS
 	);
 
+	//Capabilities
+
+	add_settings_field(
+		'ftekdm_capability_list',
+		__('List of capabilities with access to file manager. Separated by a comma', 'ftekdm'),
+		'ftekdm_capability_list_field',
+		FTEKDM_SETTINGS,
+		FTEKDM_PATH_SETTINGS
+	);
+
 	for ($i = 0; $i < count($ftekdm_perm_roles); $i++) {
 		$role = $ftekdm_perm_roles[$i];
 
@@ -272,6 +288,14 @@ function ftekdm_admin_init() {
 	register_setting(FTEKDM_SETTINGS, FTEKDM_PATH_SETTINGS);
 	
 	
+}
+
+function ftekdm_capability_list_field() {
+	$options = get_option(FTEKDM_PATH_SETTINGS);
+	$list = $options['capability-list'];
+	$name = FTEKDM_PATH_SETTINGS;
+
+	echo "<input type='text' id='ftekdm_capability_list' name='{$name}[capability-list]' value='$list'>";
 }
 
 function ftekdm_field_roles($role_index) {
