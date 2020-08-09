@@ -3,7 +3,7 @@
 Plugin Name: Ftek Documents Manager
 Author: Ingrid Strandberg | Updated by: Albert Vesterlund
 License: GPLv2
-Version: 2.1.11
+Version: 2.1.12
 Description: Ladda upp sektionsmötesprotokoll, med mera.
 GitHub Plugin URI: Fysikteknologsektionen/ftek-documents-manager
 */

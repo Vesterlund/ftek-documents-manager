@@ -263,7 +263,17 @@ if (!class_exists('FM_BootStart')) {
      * */
     public function admin_panel(){
 
-      if(!current_user_can('manage_styret_files') && !current_user_can('fnollk_files')) die( $this->render('', 'access-denied') );
+      $capabilityArray = ftekdm_generate_capability_array();
+      $die = TRUE;
+
+      foreach($capabilityArray as $capability) {
+	      if(current_user_can($capability)) {
+		      $die = FALSE;
+		      break;	
+	      }
+      }
+
+      if( $die ) die($this->render('', 'access-denied') );
 
       $this->render('', 'admin' . DS . 'index');
 
@@ -275,7 +285,17 @@ if (!class_exists('FM_BootStart')) {
      * */
     public function settings(){
      
-      if(!current_user_can('manage_styret_files') && !current_user_can('fnollk_files')) die( $this->render('', 'access-denied') );
+      $capabilityArray = ftekdm_generate_capability_array();
+      $die = TRUE;
+
+      foreach($capabilityArray as $capability) {
+	      if(current_user_can($capability)) {
+		      $die = FALSE;
+		      break;	
+	      }
+      }
+
+      if( $die ) die($this->render('', 'access-denied') );
 
       $this->render('', 'admin' . DS . 'settings');
 

@@ -16,7 +16,6 @@ foreach($capabilityArray as $capability) {
 	}
 }
 
-
 if( $die ) die();
 	
 ?>
@@ -54,10 +53,4 @@ if( isset( $this->options->options['file_manager_settings']['show_url_path'] ) &
 	
 }
 
-
-function ftekdm_generate_capability_array() {
-	$options = get_option(FTEKDM_PATH_SETTINGS);
-	$cString = $options['capability-list'];
-  
-	return explode(",",$cString);}
 ?>
