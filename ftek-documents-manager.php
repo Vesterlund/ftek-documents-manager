@@ -3,7 +3,7 @@
 Plugin Name: Ftek Documents Manager
 Author: Ingrid Strandberg | Updated by: Albert Vesterlund
 License: GPLv2
-Version: 2.1.2
+Version: 2.1.3
 Description: Ladda upp sektionsmötesprotokoll, med mera.
 GitHub Plugin URI: Fysikteknologsektionen/ftek-documents-manager
 */
@@ -274,13 +274,13 @@ function ftekdm_admin_init() {
 	$capabilityArray = ftekdm_generate_capability_array();
 
 	for ($i = 0; $i < count($capabilityArray); $i++) {
-		$role = $capabilityArray[$i];
+		$cap = $capabilityArray[$i];
 
 		add_settings_field(
 			"ftekdm_role_$i",
-			sprintf(__('Accessible path for %s','ftekdm'), $role),
-			function() use($i) {
-				ftekdm_field_roles($i);
+			sprintf(__('Accessible path for %s','ftekdm'), $cap),
+			function() use($cap) {
+				ftekdm_field_roles($cap);
 			},
 			FTEKDM_SETTINGS,
 			FTEKDM_PATH_SETTINGS
@@ -307,16 +307,11 @@ function ftekdm_capability_list_field() {
 	echo "<input type='text' id='ftekdm_capability_list' name='{$name}[capability-list]' value='$list'>";
 }
 
-function ftekdm_field_roles($role_index) {
+function ftekdm_field_roles($capability) {
 	$options = get_option(FTEKDM_PATH_SETTINGS);
-	$path = $options['path-' . $role_index];
-	$role = $options['role-' . $role_index];
+	$path = $options['path-' . $capability];
 	$name = FTEKDM_PATH_SETTINGS;
 
 	echo __("Path", 'ftekdm');
-	echo "<input type='text' id='ftekdm_role_{$role_index}_path' name='{$name}[path-$role_index]' value='$path'>";
-	
-	echo __("For role", 'ftekdm');
-	echo "<input type='text' id='ftekdm_role_{$role_index}_role' name='{$name}[role-$role_index]' value='$role'>";
-
+	echo "<input type='text' id='ftekdm_{$capability}_path' name='{$name}[path-$capability]' value='$path'>";
 }
