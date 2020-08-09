@@ -318,11 +318,11 @@ function ftekdm_field_roles($capability) {
 	echo "<input type='text' id='ftekdm_{$capability}_path' name='{$name}[path_$capability]' value='$path' style='width:100%;'>";
 }
 
-function my_plugin_settings_link($links) { 
+function ftekdm_settings_link($links) { 
 	$settings_link = '<a href="options-general.php?page=ftekdm_settings">Settings</a>'; 
 	array_unshift($links, $settings_link); 
 	return $links; 
 }
 
 $plugin = plugin_basename(__FILE__); 
-add_filter("plugin_action_links_$plugin", 'my_plugin_settings_link' );
+add_filter("plugin_action_links_$plugin", 'ftekdm_settings_link' );
