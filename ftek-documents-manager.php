@@ -3,7 +3,7 @@
 Plugin Name: Ftek Documents Manager
 Author: Ingrid Strandberg | Updated by: Albert Vesterlund
 License: GPLv2
-Version: 2.1.4
+Version: 2.1.5
 Description: Ladda upp sektionsmötesprotokoll, med mera.
 GitHub Plugin URI: Fysikteknologsektionen/ftek-documents-manager
 */
@@ -309,14 +309,14 @@ function ftekdm_capability_list_field() {
 	$list = $options['capability-list'];
 	$name = FTEKDM_PATH_SETTINGS;
 
-	echo "<input type='text' id='ftekdm_capability_list' name='{$name}[capability-list]' value='$list'>";
+	echo "<input type='text' id='ftekdm_capability_list' name='{$name}[capability-list]' value='$list' style='width:100%;'>";
 }
 
 function ftekdm_field_roles($capability) {
 	$options = get_option(FTEKDM_PATH_SETTINGS);
-	$path = $options['path-' . $capability];
+	$path = $options['path_' . $capability];
 	$name = FTEKDM_PATH_SETTINGS;
 
 	echo __("Path", 'ftekdm');
-	echo "</br><input type='text' id='ftekdm_{$capability}_path' name='{$name}[path_$capability]' value='$path' style='width:100%;'>";
+	echo "<input type='text' id='ftekdm_{$capability}_path' name='{$name}[path_$capability]' value='$path' style='width:100%;'>";
 }
