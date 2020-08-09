@@ -3,7 +3,7 @@
 Plugin Name: Ftek Documents Manager
 Author: Ingrid Strandberg | Updated by: Albert Vesterlund
 License: GPLv2
-Version: 2.1.9
+Version: 2.1.10
 Description: Ladda upp sektionsmötesprotokoll, med mera.
 GitHub Plugin URI: Fysikteknologsektionen/ftek-documents-manager
 */
@@ -54,22 +54,22 @@ if (!class_exists('FM')) {
 	public function connector(){
 		
 	  	// Checks if the current user have enough authorization to operate.
-
 		$capabilityArray = ftekdm_generate_capability_array();
+
 		$cUserCapability = "";
 
-		for($i = 0; $i < count($capabilityArray); $i++) {
-			$capability = $capabilityArray[$i];
-
-			if (current_user_can($capability)){
+		foreach($capabilityArray as $capability){
+			if(current_user_can($capability)){
 				$cUserCapability = $capability;
 				break;
 			}
 		}
+		
+		if($cUserCapability == "") die();
+		
+		$permittedPath = get_option('ftekdm_path_settings')['path_' . $cUserCapability];
 
-		if($cUserCapability == "") {
-			die();
-		}
+		if(current_user_can('administrator')) $permittedPath = "";
 
 	  //~ Holds the list of avilable file operations.
 	  $file_operation_list = array(
@@ -121,8 +121,6 @@ if (!class_exists('FM')) {
 		  );
 
 	  $mime_denied = array();
-
-	  $permittedPath = get_option('ftekdm_path_settings')['path_' . $cUserCapability];
 
 	  $opts = array(
 		  'bind' => array(
