@@ -5,31 +5,8 @@
  * 
  * */
 defined('ABSPATH') or die();
-
-
-
-$allowedCapabilities = ftekdm_generate_capability_array();
-
-
-$die = TRUE;
-foreach($allowedCapabilities as $capability) {
-
-	if(current_user_can($capability)) {
-		$die = FALSE;
-		break;
-	}
-}
-
-if($die) die();
-
-function ftekdm_generate_capability_array() {
-	$options = get_option(FTEKDM_PATH_SETTINGS);
-	$cString = $options['capability-list'];
-
-	return explode(",",$cString);
-}
-
-
+if( !current_user_can('manage_styret_files') && !current_user_can('fnollk_files') ) die();
+	
 ?>
 
 <div id='ftek-documents-manager-wrapper'>
