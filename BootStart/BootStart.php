@@ -248,6 +248,7 @@ if (!class_exists('FM_BootStart')) {
         
         foreach($capabilityArray as $capability) {
           add_menu_page( $this->name, $this->name, $capability, $this->prefix, array(&$this, 'admin_panel'), $this->url('img/icon-24x24.png'), 7 );
+          break;
         }
         
       }
