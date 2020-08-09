@@ -248,8 +248,10 @@ if (!class_exists('FM_BootStart')) {
         $capabilityArray = ftekdm_generate_capability_array();
         
         foreach($capabilityArray as $capability) {
-          add_menu_page( $this->name, $this->name, $capability, $this->prefix, array(&$this, 'admin_panel'), $this->url('img/icon-24x24.png'), 7 );
-          break;
+          if(current_user_can($capability)) {
+            add_menu_page( $this->name, $this->name, $capability, $this->prefix, array(&$this, 'admin_panel'), $this->url('img/icon-24x24.png'), 7 );
+            break;
+          }
         }
         
       }
