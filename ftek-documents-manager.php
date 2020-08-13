@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Ftek Documents Manager
-Author Name: Ingrid Strandberg
+Author: Ingrid Strandberg | Updated by: Albert Vesterlund
 License: GPLv2
-Version: 2.1.0
+Version: 2.2.0
 Description: Ladda upp sektionsmötesprotokoll, med mera.
 GitHub Plugin URI: Fysikteknologsektionen/ftek-documents-manager
 */
@@ -52,19 +52,24 @@ if (!class_exists('FM')) {
 	 *
 	 * */
 	public function connector(){
-		$userCap = -1;
-	  // Checks if the current user have enough authorization to operate.
-		if (current_user_can('manage_styret_files')) {
-			$userCap = 0;
-		}elseif (current_user_can('finform_files')) {
-			$userCap = 1;
-		}elseif (current_user_can('fnollk_files')) {
-			$userCap = 2;
-		}else {
-			die();
-		}
+		
+	  	// Checks if the current user have enough authorization to operate.
+		$capabilityArray = ftekdm_generate_capability_array();
 
-		//Todo: Prevent from starting if user has MORE than one manage files capability
+		$cUserCapability = "";
+
+		foreach($capabilityArray as $capability){
+			if(current_user_can($capability)){
+				$cUserCapability = $capability;
+				break;
+			}
+		}
+		
+		if($cUserCapability == "") die();
+		
+		$permittedPath = get_option('ftekdm_path_settings')['path_' . $cUserCapability];
+
+		if(current_user_can('administrator')) $permittedPath = "";
 
 	  //~ Holds the list of avilable file operations.
 	  $file_operation_list = array(
@@ -116,8 +121,6 @@ if (!class_exists('FM')) {
 		  );
 
 	  $mime_denied = array();
-
-	  $permittedPath = get_option('ftekdm_path_settings')['path-' . $userCap];
 
 	  $opts = array(
 		  'bind' => array(
@@ -208,6 +211,12 @@ if (!function_exists('logger'))   {
 global $FileManager;
 $FileManager = new FM('Ftek Documents Manager');
 
+
+/*
+* Settings stuff
+*
+*/
+
 define('FTEKDM_SETTINGS', 'ftekdm_settings');
 define('FTEKDM_PATH_SETTINGS', 'ftekdm_path_settings');
 
@@ -244,7 +253,6 @@ function ftekdm_settings_page() {
 
 add_action('admin_init', 'ftekdm_admin_init');
 function ftekdm_admin_init() {
-	$ftekdm_perm_roles = ['manage_styret_files', 'finform_files', 'fnollk_files'];
 
 	add_settings_section(
 		FTEKDM_PATH_SETTINGS,
@@ -255,14 +263,26 @@ function ftekdm_admin_init() {
 		FTEKDM_SETTINGS
 	);
 
-	for ($i = 0; $i < count($ftekdm_perm_roles); $i++) {
-		$role = $ftekdm_perm_roles[$i];
+	//Capabilities
+
+	add_settings_field(
+		'ftekdm_capability_list',
+		__('List of capabilities with access to file manager. Separated by a comma', 'ftekdm'),
+		'ftekdm_capability_list_field',
+		FTEKDM_SETTINGS,
+		FTEKDM_PATH_SETTINGS
+	);
+
+	$capabilityArray = ftekdm_generate_capability_array();
+
+	for ($i = 0; $i < count($capabilityArray); $i++) {
+		$cap = $capabilityArray[$i];
 
 		add_settings_field(
 			"ftekdm_role_$i",
-			sprintf(__('Accessible path for %s','ftekdm'), $role),
-			function() use($i) {
-				ftekdm_field_roles($i);
+			sprintf(__('Accessible path for %s','ftekdm'), $cap),
+			function() use($cap) {
+				ftekdm_field_roles($cap);
 			},
 			FTEKDM_SETTINGS,
 			FTEKDM_PATH_SETTINGS
@@ -274,16 +294,35 @@ function ftekdm_admin_init() {
 	
 }
 
-function ftekdm_field_roles($role_index) {
+function ftekdm_generate_capability_array() {
 	$options = get_option(FTEKDM_PATH_SETTINGS);
-	$path = $options['path-' . $role_index];
-	$role = $options['role-' . $role_index];
+	$cString = $options['capability-list'];
+
+	return explode(",",$cString);
+}
+
+function ftekdm_capability_list_field() {
+	$options = get_option(FTEKDM_PATH_SETTINGS);
+	$list = $options['capability-list'];
+	$name = FTEKDM_PATH_SETTINGS;
+
+	echo "<input type='text' id='ftekdm_capability_list' name='{$name}[capability-list]' value='$list' style='width:100%;'>";
+}
+
+function ftekdm_field_roles($capability) {
+	$options = get_option(FTEKDM_PATH_SETTINGS);
+	$path = $options['path_' . $capability];
 	$name = FTEKDM_PATH_SETTINGS;
 
 	echo __("Path", 'ftekdm');
-	echo "<input type='text' id='ftekdm_role_{$role_index}_path' name='{$name}[path-$role_index]' value='$path'>";
-	
-	echo __("For role", 'ftekdm');
-	echo "<input type='text' id='ftekdm_role_{$role_index}_role' name='{$name}[role-$role_index]' value='$role'>";
-
+	echo "<input type='text' id='ftekdm_{$capability}_path' name='{$name}[path_$capability]' value='$path' style='width:100%;'>";
 }
+
+function ftekdm_settings_link($links) { 
+	$settings_link = '<a href="options-general.php?page=ftekdm_settings">Settings</a>'; 
+	array_unshift($links, $settings_link); 
+	return $links; 
+}
+
+$plugin = plugin_basename(__FILE__); 
+add_filter("plugin_action_links_$plugin", 'ftekdm_settings_link' );

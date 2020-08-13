@@ -5,7 +5,18 @@
  * 
  * */
 defined('ABSPATH') or die();
-if( !current_user_can('manage_styret_files') && !current_user_can('fnollk_files') ) die();
+
+$capabilityArray = ftekdm_generate_capability_array();
+$die = TRUE;
+
+foreach($capabilityArray as $capability) {
+	if(current_user_can($capability)) {
+		$die = FALSE;
+		break;	
+	}
+}
+
+if( $die ) die();
 	
 ?>
 
